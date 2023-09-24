@@ -85,6 +85,7 @@ export default class Gantt {
             popup_trigger: 'click',
             custom_popup_html: null,
             language: 'en',
+            render_big_labels_outside: true,
         };
         this.options = Object.assign({}, default_options, options);
     }
@@ -139,6 +140,9 @@ export default class Gantt {
 
             return task;
         });
+
+        const reducer = (acc, task) => Math.max(task._index, acc);
+        this.rows = this.tasks.reduce(reducer, 0) + 1;
     }
 
     refresh(tasks) {
@@ -279,7 +283,7 @@ export default class Gantt {
             this.options.header_height +
             this.options.padding +
             (this.options.bar_height + this.options.padding) *
-                this.tasks.length;
+                this.rows;
 
         createSVG('rect', {
             x: 0,
@@ -291,7 +295,7 @@ export default class Gantt {
         });
 
         $.attr(this.$svg, {
-            height: grid_height + this.options.padding + 100,
+            height: grid_height,
             width: '100%',
         });
     }
@@ -305,7 +309,7 @@ export default class Gantt {
 
         let row_y = this.options.header_height + this.options.padding / 2;
 
-        for (let task of this.tasks) {
+        for (let i = 0; i < this.rows; i++) {
             createSVG('rect', {
                 x: 0,
                 y: row_y,
@@ -346,7 +350,7 @@ export default class Gantt {
         let tick_y = this.options.header_height + this.options.padding / 2;
         let tick_height =
             (this.options.bar_height + this.options.padding) *
-            this.tasks.length;
+            this.rows;
 
         for (let date of this.dates) {
             let tick_class = 'tick';
@@ -396,7 +400,7 @@ export default class Gantt {
             const width = this.options.column_width;
             const height =
                 (this.options.bar_height + this.options.padding) *
-                    this.tasks.length +
+                    this.rows +
                 this.options.header_height +
                 this.options.padding / 2;
 

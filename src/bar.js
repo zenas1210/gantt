@@ -158,7 +158,7 @@ export default class Bar {
         const bar = this.$bar,
             label = this.group.querySelector('.bar-label');
 
-        if (label.getBBox().width > bar.getWidth()) {
+        if (label.getBBox().width > bar.getWidth() && this.gantt.options.render_big_labels_outside) {
             label.classList.add('big');
             label.setAttribute('x', bar.getX() + bar.getWidth() + 5);
         } else {
