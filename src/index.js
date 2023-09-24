@@ -99,6 +99,7 @@ export default class Gantt {
             custom_popup_html: null,
             language: 'en',
             render_big_labels_outside: true,
+            hide_big_labels: false,
         };
         this.options = Object.assign({}, default_options, options);
         this.options.column_widths = Object.assign({}, default_column_widths, options.column_widths);

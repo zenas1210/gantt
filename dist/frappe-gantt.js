@@ -464,6 +464,11 @@ var Gantt = (function () {
             const bar = this.$bar,
                 label = this.group.querySelector('.bar-label');
 
+            if (label.getBBox().width > bar.getWidth() && this.gantt.options.hide_big_labels) {
+                label.classList.add('d-none');
+                return;
+            }
+
             if (label.getBBox().width > bar.getWidth() && this.gantt.options.render_big_labels_outside) {
                 label.classList.add('big');
                 label.setAttribute('x', bar.getX() + bar.getWidth() + 5);
@@ -638,6 +643,7 @@ var Gantt = (function () {
                 custom_popup_html: null,
                 language: 'en',
                 render_big_labels_outside: true,
+                hide_big_labels: false,
             };
             this.options = Object.assign({}, default_options, options);
             this.options.column_widths = Object.assign({}, default_column_widths, options.column_widths);
