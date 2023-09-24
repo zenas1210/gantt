@@ -613,6 +613,17 @@ var Gantt = (function () {
         }
 
         setup_options(options) {
+            const default_column_widths = {
+                'Eighth Day': 38,
+                'Sixth Day': 38,
+                'Quarter Day': 38,
+                'Half Day': 38,
+                Day: 38,
+                Week: 140,
+                Month: 120,
+                Year: 120,
+            };
+
             const default_options = {
                 header_height: 50,
                 column_width: 30,
@@ -629,6 +640,7 @@ var Gantt = (function () {
                 render_big_labels_outside: true,
             };
             this.options = Object.assign({}, default_options, options);
+            this.options.column_widths = Object.assign({}, default_column_widths, options.column_widths);
         }
 
         setup_tasks(tasks) {
@@ -699,33 +711,32 @@ var Gantt = (function () {
             this.trigger_event('view_change', [mode]);
         }
 
+        change_column_width(column_width) {
+            this.options.column_widths[this.options.view_mode] = column_width;
+            this.change_view_mode(this.options.view_mode);
+        }
+
         update_view_scale(view_mode) {
             this.options.view_mode = view_mode;
 
+            this.options.column_width = this.options.column_widths[view_mode];
+
             if (view_mode === VIEW_MODE.DAY) {
                 this.options.step = 24;
-                this.options.column_width = 38;
             } else if (view_mode === VIEW_MODE.HALF_DAY) {
                 this.options.step = 24 / 2;
-                this.options.column_width = 38;
             } else if (view_mode === VIEW_MODE.QUARTER_DAY) {
                 this.options.step = 24 / 4;
-                this.options.column_width = 38;
             } else if (view_mode === VIEW_MODE.SIXTH_DAY) {
                 this.options.step = 24 / 6;
-                this.options.column_width = 38;
             } else if (view_mode === VIEW_MODE.EIGHTH_DAY) {
                 this.options.step = 24 / 8;
-                this.options.column_width = 38;
             } else if (view_mode === VIEW_MODE.WEEK) {
                 this.options.step = 24 * 7;
-                this.options.column_width = 140;
             } else if (view_mode === VIEW_MODE.MONTH) {
                 this.options.step = 24 * 30;
-                this.options.column_width = 120;
             } else if (view_mode === VIEW_MODE.YEAR) {
                 this.options.step = 24 * 365;
-                this.options.column_width = 120;
             }
         }
 
