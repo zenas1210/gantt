@@ -26,8 +26,8 @@ export default class Bar {
         this.y = this.compute_y();
         this.corner_radius = this.gantt.options.bar_corner_radius;
         this.duration =
-            date_utils.diff(this.task._end, this.task._start, 'hour') /
-            this.gantt.options.step;
+            date_utils.diff(this.task._end, this.task._start, 'minute') /
+            (this.gantt.options.step * 60);
         this.width = this.gantt.options.column_width * this.duration;
         this.group = createSVG('g', {
             class: 'bar-wrapper ' + (this.task.custom_class || ''),
@@ -133,9 +133,10 @@ export default class Bar {
         const { step, column_width } = this.gantt.options;
         const task_start = this.task._start;
         const gantt_start = this.gantt.gantt_start;
+        const minuteStep = step * 60;
 
-        const diff = date_utils.diff(task_start, gantt_start, 'hour');
-        let x = (diff / step) * column_width;
+        const diff = date_utils.diff(task_start, gantt_start, 'minute');
+        let x = (diff / minuteStep) * column_width;
 
         if (this.gantt.view_is('Month')) {
             const diff = date_utils.diff(task_start, gantt_start, 'day');

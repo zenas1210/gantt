@@ -6,6 +6,8 @@ import Popup from './popup';
 import './gantt.scss';
 
 const VIEW_MODE = {
+    EIGHTH_DAY: 'Eighth Day',
+    SIXTH_DAY: 'Sixth Day',
     QUARTER_DAY: 'Quarter Day',
     HALF_DAY: 'Half Day',
     DAY: 'Day',
@@ -170,6 +172,12 @@ export default class Gantt {
         } else if (view_mode === VIEW_MODE.QUARTER_DAY) {
             this.options.step = 24 / 4;
             this.options.column_width = 38;
+        } else if (view_mode === VIEW_MODE.SIXTH_DAY) {
+            this.options.step = 24 / 6;
+            this.options.column_width = 38;
+        } else if (view_mode === VIEW_MODE.EIGHTH_DAY) {
+            this.options.step = 24 / 8;
+            this.options.column_width = 38;
         } else if (view_mode === VIEW_MODE.WEEK) {
             this.options.step = 24 * 7;
             this.options.column_width = 140;
@@ -204,7 +212,7 @@ export default class Gantt {
         this.gantt_end = date_utils.start_of(this.gantt_end, 'day');
 
         // add date padding on both sides
-        if (this.view_is([VIEW_MODE.QUARTER_DAY, VIEW_MODE.HALF_DAY])) {
+        if (this.view_is([VIEW_MODE.QUARTER_DAY, VIEW_MODE.HALF_DAY, VIEW_MODE.SIXTH_DAY, VIEW_MODE.EIGHTH_DAY])) {
             this.gantt_start = date_utils.add(this.gantt_start, -7, 'day');
             this.gantt_end = date_utils.add(this.gantt_end, 7, 'day');
         } else if (this.view_is(VIEW_MODE.MONTH)) {
@@ -371,6 +379,15 @@ export default class Gantt {
                 tick_class += ' thick';
             }
 
+            if (this.view_is([VIEW_MODE.EIGHTH_DAY, VIEW_MODE.SIXTH_DAY, VIEW_MODE.QUARTER_DAY, VIEW_MODE.HALF_DAY])) {
+                if (date.getHours() === 0) {
+                    tick_class += ' thick';
+                } else {
+                    tick_x += this.options.column_width;
+                    continue;
+                }
+            }
+
             createSVG('path', {
                 d: `M ${tick_x} ${tick_y} v ${tick_height}`,
                 class: tick_class,
@@ -518,6 +535,10 @@ export default class Gantt {
         };
 
         const x_pos = {
+            'Eighth Day_lower': 0,
+            'Eighth Day_upper': (this.options.column_width * 8) / 2,
+            'Sixth Day_lower': 0,
+            'Sixth Day_upper': (this.options.column_width * 6) / 2,
             'Quarter Day_lower': 0,
             'Quarter Day_upper': (this.options.column_width * 4) / 2,
             'Half Day_lower': 0,
@@ -532,9 +553,14 @@ export default class Gantt {
             Year_upper: (this.options.column_width * 30) / 2,
         };
 
+        let eqViewMode = this.options.view_mode;
+        if (this.view_is([VIEW_MODE.EIGHTH_DAY, VIEW_MODE.SIXTH_DAY])) {
+            eqViewMode = VIEW_MODE.QUARTER_DAY;
+        }
+
         return {
-            upper_text: date_text[`${this.options.view_mode}_upper`],
-            lower_text: date_text[`${this.options.view_mode}_lower`],
+            upper_text: date_text[`${eqViewMode}_upper`],
+            lower_text: date_text[`${eqViewMode}_lower`],
             upper_x: base_pos.x + x_pos[`${this.options.view_mode}_upper`],
             upper_y: base_pos.upper_y,
             lower_x: base_pos.x + x_pos[`${this.options.view_mode}_lower`],
