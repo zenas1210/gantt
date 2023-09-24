@@ -1,5 +1,5 @@
 import date_utils from './date_utils';
-import { $, createSVG, animateSVG } from './svg_utils';
+import { $, createSVG } from './svg_utils';
 
 export default class Bar {
     constructor(gantt, task) {
@@ -73,8 +73,6 @@ export default class Bar {
             class: 'bar',
             append_to: this.bar_group,
         });
-
-        animateSVG(this.$bar, 'width', 0, this.width);
 
         if (this.invalid) {
             this.$bar.classList.add('bar-invalid');
